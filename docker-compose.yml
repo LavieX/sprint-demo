@@ -1,0 +1,20 @@
+version: '3'
+services:
+  hello-spring-boot:
+    image: "quay.io/stsatlas/sprint-demo-jake-spring-boot"
+    networks:
+      - sts-atlas_atlas-deploy_lb-net
+      - default
+    environment:
+      - SERVICE_PORTS=8080
+  clojure-lein:
+    image: "quay.io/stsatlas/sprint-demo-jake-clojure-lein"
+    networks:
+      - sts-atlas_atlas-deploy_lb-net
+      - default
+    environment:
+      - SERVICE_PORTS=4000
+networks:
+  default:
+  sts-atlas_atlas-deploy_lb-net:
+    external: true

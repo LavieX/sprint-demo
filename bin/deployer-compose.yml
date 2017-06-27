@@ -1,0 +1,32 @@
+version: '3'
+services:
+  deployer:
+    image: quay.io/stsatlas/sts-atlas-atlas-deploy-deployer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - SERVICE_PORTS=4000
+      - VIRTUAL_HOST=deployer.sts-atlas_atlas-deploy.swarm.commonstack.io
+    deploy:
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - lb-net
+  lb:
+    image: quay.io/stsatlas/sts-atlas-atlas-deploy-haproxy
+    depends_on:
+      - deployer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      mode: global
+      placement:
+        constraints: [node.role == manager]
+    ports:
+      - 80:80
+    networks:
+      - lb-net
+networks:
+  lb-net:
